@@ -10,3 +10,57 @@ how to call the web service and assert what it should return.
 - The service must be able to update a counter by name.
 - The service must be able to read the counter
 """
+
+from unittest import TestCase
+
+# we need to import the unit under test - counter
+from src.counter import app 
+
+# we need to import the file that contains the status codes
+from src import status 
+
+class CounterTest(TestCase):
+    """Counter tests"""
+
+    def setUp(self):
+        self.client = app.test_client()
+
+    def test_create_a_counter(self):
+     """It should create a counter"""
+     client = app.test_client()
+     result = client.post('/counters/foo')
+     self.assertEqual(result.status_code, status.HTTP_201_CREATED)
+
+    def test_duplicate_a_counter(self):
+        """It should return an error for duplicates"""
+        result = self.client.post('/counters/bar')
+        self.assertEqual(result.status_code, status.HTTP_201_CREATED)
+        result = self.client.post('/counters/bar')
+        self.assertEqual(result.status_code, status.HTTP_409_CONFLICT)
+
+    def test_update_a_counter(self):
+
+       result = self.client.post('/counters/test')
+       self.assertEqual(result.status_code, status.HTTP_201_CREATED)
+
+       updateResult = self.client.put('/counters/test')
+       self.assertEqual(updateResult.status_code, status.HTTP_200_OK)
+
+       self.assertEqual(result.get_json()['test'] + 1, updateResult.get_json()['test'])
+
+       nullCounter = self.client.put('/counters/NULL')
+       self.assertEqual(nullCounter.status_code, status.HTTP_404_NOT_FOUND)
+    
+    def test_read_counter(self):
+       
+       result = self.client.post('/counters/newTest')
+       self.assertEqual(result.status_code, status.HTTP_201_CREATED)
+
+       for x in range(5):
+          self.client.put('/counters/newTest')
+        
+       num = self.client.get('/counters/newTest')
+       self.assertEqual(num.get_json()['newTest'], 5)
+
+       nullCounter = self.client.get('/counters/NULL')
+       self.assertEqual(nullCounter.status_code, status.HTTP_404_NOT_FOUND)
