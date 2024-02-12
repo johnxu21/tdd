@@ -10,3 +10,48 @@ how to call the web service and assert what it should return.
 - The service must be able to update a counter by name.
 - The service must be able to read the counter
 """
+from unittest import TestCase
+
+# we need to import the unit under test - counter
+from src.counter import app
+
+# we need to import the file that contains the status codes
+from src import status
+
+class CounterTest(TestCase):
+    """Counter tests"""
+    def setUp(self):
+        self.client = app.test_client()
+
+    def test_create_a_counter(self):
+        """It should create a counter"""
+        result = self.client.post('/counters/foo')
+        self.assertEqual(result.status_code, status.HTTP_201_CREATED)
+
+    def test_duplicate_a_counter(self):
+        """It should return an error for duplicates"""
+        result = self.client.post('/counters/bar')
+        self.assertEqual(result.status_code, status.HTTP_201_CREATED)
+        result = self.client.post('/counters/bar')
+        self.assertEqual(result.status_code, status.HTTP_409_CONFLICT)
+
+    def test_update_a_counter(self):
+        """It should update the counter"""
+        result = self.client.post('/counters/cherry')
+        self.assertEqual(result.status_code, status.HTTP_201_CREATED)
+        firstTimeCounter = result.json['cherry']
+        result = self.client.put('/counters/cherry')
+        secondTimeCounter = result.json['cherry']
+        self.assertEqual(result.status_code, status.HTTP_200_OK)
+        self.assertEqual(secondTimeCounter, firstTimeCounter + 1)
+        result = self.client.put('/counters/cherries')
+        self.assertEqual(result.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_a_counter(self):
+        """It should delete the counter"""
+        result = self.client.post('/counters/bell')
+        self.assertEqual(result.status_code, status.HTTP_201_CREATED)
+        result = self.client.delete('/counters/bar')
+        self.assertEqual(result.status_code, status.HTTP_404_NOT_FOUND)
+        result = self.client.delete('/counters/bell')
+        self.assertEqual(result.status_code, status.HTTP_204_NO_CONTENT)
