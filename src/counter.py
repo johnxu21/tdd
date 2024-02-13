@@ -49,4 +49,4 @@ def delete_counter(name):
     # Delete the count and 204_NO_CONTENT
     # if name in COUNTERS:
     del COUNTERS[name]
-    return {name: COUNTERS[name]}, status.HTTP_204_NO_CONTENT
+    return {"Message": f"Counter {name} has been deleted"},  status.HTTP_204_NO_CONTENT
