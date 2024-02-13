@@ -40,4 +40,3 @@ def read_counter(name):
     if name in COUNTERS:
         return {name: COUNTERS[name]}, status.HTTP_200_OK
     return {"Message": f"Counter {name} does not exists"}, status.HTTP_404_NOT_FOUND
-
