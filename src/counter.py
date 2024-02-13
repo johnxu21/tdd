@@ -47,6 +47,6 @@ def delete_counter(name):
     app.logger.info(f"Request to delete counter: {name}")
     global COUNTERS
     # Delete the count and 204_NO_CONTENT
-    if name in COUNTERS:
-        del COUNTERS[name]
-        return {name: COUNTERS[name]}, status.HTTP_204_NO_CONTENT
+    #if name in COUNTERS:
+    del COUNTERS[name]
+    return {name: COUNTERS[name]}, status.HTTP_204_NO_CONTENT
