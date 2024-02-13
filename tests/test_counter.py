@@ -91,4 +91,6 @@ class CounterTest(TestCase):
         # 2. delete the counter
         delete = self.client.delete('/counters/foofoo')
         self.assertEqual(delete.status_code, status.HTTP_204_NO_CONTENT)
-        
+        # 3. Test for non-deleted  counter
+        result = self.client.pos('/counters/barbar')
+        self.assertEqual(result.status_code, status.HTTP_409_CONFLICT)
