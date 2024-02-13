@@ -48,5 +48,5 @@ def delete_counter(name):
     global COUNTERS
     # Delete the count and 204_NO_CONTENT
     if name in COUNTERS:
-        return {name: COUNTERS[name]}, status.HTTP_200_OK
+        return {name: COUNTERS[name]}, status.HTTP_409_CONFLICT
     return {"Message": f"Counter {name} does not exists"}, status.HTTP_204_NO_CONTENT
