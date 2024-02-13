@@ -91,6 +91,8 @@ class CounterTest(TestCase):
         # 2. delete the counter
         delete = self.client.delete('/counters/foofoo')
         self.assertEqual(delete.status_code, status.HTTP_204_NO_CONTENT)
-        # 3. Test for non-deleted  counter
+    def test_delete_non_counter(self):
+        """It should not be able to delete the counter"""
+        #1. Test for non-deleted  counter
         result = self.client.delete('/counters/barbar')
         self.assertEqual(result.status_code, status.HTTP_404_NOT_FOUND)
